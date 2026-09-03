@@ -13,7 +13,9 @@ A weather dashboard styled like an analog instrument panel — a dial instead of
 - **Works offline** — a service worker caches the app shell and last API response; the last reading is also saved to `localStorage`, so the dashboard is never blank, even on first load with no connection
 - **No API key required** — weather data comes from [Open-Meteo](https://open-meteo.com/), free and keyless
 - **Installable** — has a manifest and icons, so it can be added to your home screen or dock like a native app
-- **Location search or geolocation** — type a place name or use your current position
+- **Location search or geolocation** — type a place name or use your current position.
+
+ Losing signal doesn't mean losing the app — most weather apps just break (blank screen or spinner) the moment you're offline. This one  keeps showing your last reading instead, so it degrades gracefully rather than failing outright.
 
 ## Tech stack
 
