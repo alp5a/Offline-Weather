@@ -4,7 +4,7 @@ A weather dashboard styled like an analog instrument panel — a dial instead of
 
 **[Live demo →](#)**\https://alp5a.github.io/Offline-Weather/)
 
-![Instrument screenshot](docs/screenshot.png)
+![Instrument screenshot](docs/Screenshot.PNG)
 
 ## Features
 
