@@ -1,0 +1,436 @@
+/* ============================================================
+   Instrument — an analog-gauge weather dashboard
+   Design concept: a physical instrument panel (barometer /
+   thermometer housing), not a generic weather-app card list.
+   ============================================================ */
+
+:root {
+  --page: #12151b;
+  --panel: #1b2028;
+  --panel-line: #2a303b;
+  --brass: #c98a3e;
+  --brass-dim: rgba(201, 138, 62, 0.35);
+  --ivory: #eef0f0;
+  --ivory-dim: rgba(238, 240, 240, 0.56);
+  --teal: #6ea3aa;
+  --rust: #c06a4d;
+
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --font-sans: 'Manrope', system-ui, sans-serif;
+
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--page);
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(12px, 4vw, 32px);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---------- offline flag ---------- */
+
+.offline-flag {
+  width: 100%;
+  max-width: 640px;
+  background: var(--rust);
+  color: #1b1210;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 16px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.offline-flag__pin {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #1b1210;
+  flex-shrink: 0;
+}
+
+/* ---------- panel shell ---------- */
+
+.panel {
+  width: 100%;
+  max-width: 640px;
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  border-radius: 20px;
+  padding: clamp(18px, 4vw, 34px);
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.6);
+}
+
+.offline-flag:not([hidden]) + .panel {
+  border-radius: 0 0 20px 20px;
+  border-top: none;
+}
+
+/* ---------- nameplate / header ---------- */
+
+.nameplate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--panel-line);
+}
+
+.nameplate__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nameplate__mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--brass);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.nameplate__mark::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 1.5px;
+  background: var(--ivory);
+  transform-origin: left center;
+  transform: rotate(-40deg);
+}
+
+.nameplate h1 {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin: 0;
+  color: var(--ivory);
+}
+
+.nameplate__search {
+  display: flex;
+  align-items: center;
+  background: var(--page);
+  border: 1px solid var(--panel-line);
+  border-radius: 10px;
+  padding: 6px 6px 6px 12px;
+  gap: 4px;
+}
+
+.nameplate__search input {
+  background: transparent;
+  border: none;
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  width: 150px;
+  outline: none;
+}
+
+.nameplate__search input::placeholder {
+  color: var(--ivory-dim);
+}
+
+.nameplate__search button {
+  background: transparent;
+  border: none;
+  color: var(--ivory-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 7px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.nameplate__search button:hover {
+  color: var(--brass);
+  background: rgba(201, 138, 62, 0.1);
+}
+
+.search-results {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 4px;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: min(280px, 100%);
+  background: var(--page);
+  border: 1px solid var(--panel-line);
+  border-radius: 10px;
+  z-index: 5;
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.7);
+}
+
+.search-results li button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.search-results li button:hover,
+.search-results li button:focus-visible {
+  background: rgba(201, 138, 62, 0.14);
+}
+
+.search-results li small {
+  display: block;
+  color: var(--ivory-dim);
+  font-size: 11.5px;
+  margin-top: 1px;
+}
+
+/* ---------- reading: dial + ledger ---------- */
+
+.reading {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: clamp(16px, 4vw, 36px);
+  align-items: center;
+}
+
+@media (max-width: 560px) {
+  .reading {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+}
+
+.reading__dial-wrap {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  flex-shrink: 0;
+}
+
+.dial {
+  width: 100%;
+  height: 100%;
+}
+
+.dial-tick {
+  stroke: var(--brass-dim);
+}
+
+.dial-tick--major {
+  stroke: var(--brass);
+}
+
+.dial-arc-track {
+  fill: none;
+  stroke: var(--panel-line);
+  stroke-width: 3;
+}
+
+.dial-arc-value {
+  fill: none;
+  stroke: var(--brass);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.dial-needle {
+  stroke: var(--ivory);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transform-origin: 120px 120px;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dial-hub {
+  fill: var(--ivory);
+}
+
+.reading__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.reading__temp {
+  font-family: var(--font-mono);
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ivory);
+}
+
+.reading__unit {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ivory-dim);
+  margin-left: 2px;
+}
+
+.reading__condition {
+  font-size: 13.5px;
+  color: var(--brass);
+  font-weight: 500;
+  max-width: 150px;
+}
+
+.ledger {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ledger__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--panel-line);
+  gap: 12px;
+}
+
+.ledger__row:last-child { border-bottom: none; }
+
+.ledger__row dt {
+  font-size: 13.5px;
+  color: var(--ivory-dim);
+}
+
+.ledger__row dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ivory);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---------- forecast strip ---------- */
+
+.forecast {
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid var(--panel-line);
+}
+
+.forecast__title {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--ivory-dim);
+  margin: 0 0 14px;
+}
+
+.forecast__strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 78px;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--panel-line) transparent;
+}
+
+.day-chip {
+  border: 1px solid var(--panel-line);
+  border-radius: 12px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--page);
+}
+
+.day-chip__label {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ivory-dim);
+}
+
+.day-chip__arc {
+  width: 44px;
+  height: 44px;
+}
+
+.day-chip__hi {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ivory);
+}
+
+.day-chip__lo {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ivory-dim);
+}
+
+/* ---------- footer ---------- */
+
+.status-line {
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid var(--panel-line);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ivory-dim);
+  gap: 10px;
+}
+
+#place-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#updated-label { flex-shrink: 0; }

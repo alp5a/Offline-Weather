@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Instrument — Offline Weather</title>
+  <meta name="description" content="A weather dashboard styled like an analog instrument panel. Works fully offline from your last reading." />
+  <meta name="theme-color" content="#1b2028" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="offline-flag" class="offline-flag" hidden>
+    <span class="offline-flag__pin" aria-hidden="true"></span>
+    <span>Offline — showing last reading</span>
+  </div>
+
+  <main class="panel">
+
+    <header class="nameplate">
+      <div class="nameplate__brand">
+        <span class="nameplate__mark" aria-hidden="true"></span>
+        <h1>Instrument</h1>
+      </div>
+      <form id="search-form" class="nameplate__search" role="search">
+        <input
+          id="search-input"
+          type="text"
+          name="place"
+          placeholder="Enter a place…"
+          autocomplete="off"
+          aria-label="Search for a place"
+        />
+        <button type="submit" aria-label="Search">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="16.2" y1="16.2" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button type="button" id="locate-btn" aria-label="Use current location" title="Use current location">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" fill="currentColor"/>
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </form>
+      <ul id="search-results" class="search-results" hidden></ul>
+    </header>
+
+    <section id="reading" class="reading" aria-live="polite">
+      <div class="reading__dial-wrap">
+        <svg id="dial" class="dial" viewBox="0 0 240 240" role="img" aria-labelledby="dial-title">
+          <title id="dial-title">Current temperature dial</title>
+        </svg>
+        <div class="reading__center">
+          <div class="reading__temp"><span id="temp-value">—</span><span class="reading__unit">°C</span></div>
+          <div id="condition-label" class="reading__condition">Loading…</div>
+        </div>
+      </div>
+
+      <dl class="ledger">
+        <div class="ledger__row">
+          <dt>Feels like</dt><dd id="feels-like">—</dd>
+        </div>
+        <div class="ledger__row">
+          <dt>High / Low</dt><dd id="hi-lo">—</dd>
+        </div>
+        <div class="ledger__row">
+          <dt>Humidity</dt><dd id="humidity">—</dd>
+        </div>
+        <div class="ledger__row">
+          <dt>Wind</dt><dd id="wind">—</dd>
+        </div>
+        <div class="ledger__row">
+          <dt>Pressure</dt><dd id="pressure">—</dd>
+        </div>
+        <div class="ledger__row">
+          <dt>UV index</dt><dd id="uv">—</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="forecast" aria-label="7-day forecast">
+      <h2 class="forecast__title">Seven-day outlook</h2>
+      <div id="forecast-strip" class="forecast__strip"></div>
+    </section>
+
+    <footer class="status-line">
+      <span id="place-label">—</span>
+      <span id="updated-label">—</span>
+    </footer>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
