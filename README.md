@@ -2,7 +2,7 @@
 
 A weather dashboard styled like an analog instrument panel — a dial instead of an icon, a ledger instead of a card grid. It installs like a native app and keeps showing your last reading when you lose connection.
 
-**[Live demo →](#)** *(replace with your GitHub Pages URL once deployed)*
+**[Live demo →](#)**\https://alp5a.github.io/Offline-Weather/)
 
 ![Instrument screenshot](docs/screenshot.png)
 
