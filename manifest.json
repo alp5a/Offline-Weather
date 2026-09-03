@@ -1,6 +1,6 @@
 {
-  "name": "Instrument — Offline Weather",
-  "short_name": "Instrument",
+  "name": "Offline Weather",
+  "short_name": "Offline Weather",
   "description": "A weather dashboard styled like an analog instrument panel. Works fully offline from your last reading.",
   "start_url": "./index.html",
   "scope": "./",
