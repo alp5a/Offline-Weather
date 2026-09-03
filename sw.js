@@ -53,7 +53,16 @@ self.addEventListener('fetch', (event) => {
           caches.open(API_CACHE).then((cache) => cache.put(request, clone));
           return response;
         })
-        .catch(() => caches.match(request))
+        .catch(() =>
+          caches.match(request).then(
+            (cached) =>
+              cached ||
+              new Response(JSON.stringify({ error: 'offline' }), {
+                status: 503,
+                headers: { 'Content-Type': 'application/json' },
+              })
+          )
+        )
     );
     return;
   }
@@ -71,7 +80,7 @@ self.addEventListener('fetch', (event) => {
           })
           .catch(() => {
             if (request.mode === 'navigate') return caches.match('./index.html');
-            return undefined;
+            return new Response('', { status: 503, statusText: 'Offline' });
           });
       })
     );
